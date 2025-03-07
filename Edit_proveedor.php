@@ -30,6 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Datos que se enviarán a la API
     $data = array(
+        'proovedorId' => $proveedor_id, // Incluir el ID si la API lo requiere
         'nombre' => $nombre,
         'contacto' => $contacto,
         'direccion' => $direccion
@@ -59,8 +60,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: GetDataPHP.php");
         exit();
     } else {
-        // Mostrar un mensaje de error si el código de estado no es 200 o 204
+        // Mostrar un mensaje de error con más detalles
         echo "<div class='alert alert-danger'>Error al actualizar el proveedor. Código de respuesta: $http_code</div>";
+        echo "<div class='alert alert-info'>Respuesta de la API: " . htmlspecialchars($response) . "</div>"; // Mostrar la respuesta de la API
     }
 }
 ?>

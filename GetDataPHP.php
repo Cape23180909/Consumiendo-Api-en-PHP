@@ -42,13 +42,15 @@
                                 <th>Nombre</th>
                                 <th>Contacto</th>
                                 <th>Dirección</th>
+                                <th>Editar</th>
+                                <th>Eliminar</th>
                             </tr>
                         </thead>
                         <tbody>";
 
                 foreach ($proveedores_data as $proveedor) {
                     // Verificar si las claves existen en el array
-                    $id = isset($proveedor['id']) ? $proveedor['id'] : 'N/A';
+                    $id = isset($proveedor['proovedorId']) ? $proveedor['proovedorId'] : 'N/A';
                     $nombre = isset($proveedor['nombre']) ? $proveedor['nombre'] : 'N/A';
                     $contacto = isset($proveedor['contacto']) ? $proveedor['contacto'] : 'N/A';
                     $direccion = isset($proveedor['direccion']) ? $proveedor['direccion'] : 'N/A';
@@ -58,6 +60,8 @@
                             <td>".$nombre."</td>
                             <td>".$contacto."</td>
                             <td>".$direccion."</td>
+                            <td><a href='Edit_proveedor.php?id=".$id."' class='btn btn-primary'>Editar</a></td>
+                            <td><a href='Delete_proveedor.php?id=".$id."' class='btn btn-danger'>Eliminar</a></td>
                           </tr>";
                 }
 
