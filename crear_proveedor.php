@@ -1,26 +1,4 @@
 <?php
-// Obtener el ID del proveedor a editar desde la URL
-$proveedor_id = isset($_GET['id']) ? $_GET['id'] : null;
-
-if (!$proveedor_id) {
-    echo "<div class='alert alert-danger'>ID de proveedor no proporcionado.</div>";
-    exit();
-}
-
-// Obtener los datos del proveedor desde la API
-$ch = curl_init("https://inventarioapi-f3c6fvgsh0f2aueq.eastus2-01.azurewebsites.net/api/Proovedores/$proveedor_id");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$response = curl_exec($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
-
-if ($http_code != 200) {
-    echo "<div class='alert alert-danger'>Error al obtener los datos del proveedor. Código de respuesta: $http_code</div>";
-    exit();
-}
-
-$proveedor = json_decode($response, true);
-
 // Procesar el formulario cuando se envía
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recoger los datos del formulario
@@ -38,10 +16,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Convertir los datos a JSON
     $json_data = json_encode($data);
 
-    // Configurar la solicitud cURL para actualizar el proveedor
-    $ch = curl_init("https://inventarioapi-f3c6fvgsh0f2aueq.eastus2-01.azurewebsites.net/api/Proovedores/$proveedor_id");
+    // Configurar la solicitud cURL
+    $ch = curl_init("https://inventarioapi-f3c6fvgsh0f2aueq.eastus2-01.azurewebsites.net/api/Proovedores");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT"); // Usar PUT para actualizar
+    curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'Content-Type: application/json',
@@ -53,14 +31,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // Obtener el código de estado HTTP
     curl_close($ch);
 
-    // Verificar si la actualización fue exitosa (código HTTP 200 o 204)
-    if ($http_code == 200 || $http_code == 204) {
+    // Verificar si la creación fue exitosa (código HTTP 200 o 201)
+    if ($http_code == 200 || $http_code == 201) {
         // Redirigir a GetDataPHP.php después de guardar
         header("Location: GetDataPHP.php");
         exit();
     } else {
-        // Mostrar un mensaje de error si el código de estado no es 200 o 204
-        echo "<div class='alert alert-danger'>Error al actualizar el proveedor. Código de respuesta: $http_code</div>";
+        // Mostrar un mensaje de error si el código de estado no es 200 o 201
+        echo "<div class='alert alert-danger'>Error al crear el proveedor. Código de respuesta: $http_code</div>";
     }
 }
 ?>
@@ -69,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Proveedor</title>
+    <title>Crear Proveedor</title>
     <!-- Enlace al archivo CSS -->
     <link rel="stylesheet" href="styles.css">
     <!-- Bootstrap CSS -->
@@ -77,24 +55,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center">Editar Proveedor</h1>
-        <form method="POST" action="Edit_proveedor.php?id=<?php echo $proveedor_id; ?>">
+        <h1 class="text-center">Crear Nuevo Proveedor</h1>
+        <form method="POST" action="crear_proveedor.php">
             <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo htmlspecialchars($proveedor['nombre']); ?>" required>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
             </div>
 
             <div class="mb-3">
                 <label for="contacto" class="form-label">Contacto</label>
-                <input type="text" class="form-control" id="contacto" name="contacto" value="<?php echo htmlspecialchars($proveedor['contacto']); ?>" required>
+                <input type="text" class="form-control" id="contacto" name="contacto" required>
             </div>
 
             <div class="mb-3">
                 <label for="direccion" class="form-label">Dirección</label>
-                <input type="text" class="form-control" id="direccion" name="direccion" value="<?php echo htmlspecialchars($proveedor['direccion']); ?>" required>
+                <input type="text" class="form-control" id="direccion" name="direccion" required>
             </div>
             
-            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
             <a href="GetDataPHP.php" class="btn btn-secondary">Cancelar</a>
         </form>
     </div>
